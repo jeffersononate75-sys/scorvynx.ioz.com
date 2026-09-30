@@ -1,0 +1,467 @@
+
+
+📄 .env
+SUPABASE_PROJECT_ID="rqykctwplccjpmymccas"
+SUPABASE_PUBLISHABLE_KEY="sb_publishable_4v-X_gYRPoun2E8TkBr8WQ_a1pM0O8z"
+SUPABASE_URL="https://c--0b78a4f5-304b-5de5-894b-79f924de1b7b-prod.lovable.cloud"
+VITE_SUPABASE_PROJECT_ID="rqykctwplccjpmymccas"
+VITE_SUPABASE_PUBLISHABLE_KEY="sb_publishable_4v-X_gYRPoun2E8TkBr8WQ_a1pM0O8z"
+VITE_SUPABASE_URL="https://c--0b78a4f5-304b-5de5-894b-79f924de1b7b-prod.lovable.cloud"
+📄 .gitignore
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+.output
+.vinxi
+.tanstack/**
+.nitro
+*.local
+
+# Wrangler / Cloudflare
+.wrangler/
+.dev.vars
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+📄 .prettierignore
+node_modules
+dist
+.output
+.vinxi
+pnpm-lock.yaml
+package-lock.json
+bun.lock
+routeTree.gen.ts
+📄 .prettierrc
+{
+  "printWidth": 100,
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all"
+}
+📄 AGENTS.md
+<!-- LOVABLE:BEGIN -->
+> [!IMPORTANT]
+> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting published git history — force pushing, or rebasing/amending/squashing commits that are already pushed — as it rewrites history on Lovable's side and the user will likely lose their project history.
+<!-- LOVABLE:END -->
+
+- Public content has independent TanStack routes with a shared layout because each section needs a shareable URL and its own metadata.
+- Anonymous inquiries are validated in a server function and written with the server-only privileged client because public browser reads and writes must remain disabled by RLS.
+- Attachments live in a private Cloud bucket and are uploaded only by the server function because submitted project files are confidential.
+- AI chat, payments, accounts, project tracking and administration remain unimplemented until their workflows and permissions are defined; public UI must not simulate them.
+📄 README.md
+# Welcome to your Lovable project
+
+This project was built with [Lovable](https://lovable.dev).
+
+## Build with Lovable
+
+Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
+- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+```sh
+git clone <this-repository-url>
+cd <repository-name>
+npm i
+npm run dev
+Built with
+TanStack Start
+TypeScript
+React
+Tailwind CSS
+
+
+## 📄 bunfig.toml
+
+```toml
+[install]
+saveTextLockfile = true
+# 24h supply-chain guard: skip package versions published less than a day ago.
+minimumReleaseAge = 86400
+# Each entry bypasses the 24h guard for one package — confirm with the user
+# before adding any.
+minimumReleaseAgeExcludes = ["@lovable.dev/vite-tanstack-config", "@lovable.dev/mcp-js", "@lovable.dev/email-js", "@lovable.dev/webhooks-js"]
+📄 components.json
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "css": "src/styles.css",
+    "baseColor": "slate",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "registries": {}
+}
+📄 drizzle.config.ts
+import { defineConfig } from "drizzle-kit";
+
+export default defineConfig({
+  dialect: "postgresql",
+  schema: "./drizzle/schema.ts",
+  out: "./drizzle/migrations",
+  dbCredentials: {
+    url: process.env.LOVABLE_DB_MIGRATION_URL ?? "",
+  },
+});
+📄 eslint.config.js
+import js from "@eslint/js";
+import eslintPluginPrettier from "eslint-plugin-prettier/recommended";
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import tseslint from "typescript-eslint";
+
+export default tseslint.config(
+  { ignores: ["dist", ".output", ".vinxi"] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ["**/*.{ts,tsx}"],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "server-only",
+              message:
+                "TanStack Start does not use the Next.js `server-only` package. Rename the module to `*.server.ts` or mark it with `@tanstack/react-start/server-only`.",
+            },
+          ],
+        },
+      ],
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  },
+  eslintPluginPrettier,
+);
+📄 package.json
+{
+  "name": "tanstack_start_ts",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "build:dev": "vite build --mode development",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "overrides": {
+    "rolldown": "1.2.1"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.78",
+    "@ai-sdk/react": "^4.0.121",
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-aspect-ratio": "^1.1.8",
+    "@radix-ui/react-avatar": "^1.1.11",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-context-menu": "^2.2.16",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-hover-card": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-menubar": "^1.1.16",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
+    "@radix-ui/react-radio-group": "^1.3.8",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slider": "^1.3.6",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toggle": "^1.1.10",
+    "@radix-ui/react-toggle-group": "^1.1.11",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "@supabase/supabase-js": "^2.117.2",
+    "@tailwindcss/vite": "^4.2.1",
+    "@tanstack/react-query": "^5.101.1",
+    "@tanstack/react-router": "1.170.18",
+    "@tanstack/react-start": "1.168.32",
+    "@tanstack/router-plugin": "1.168.23",
+    "ai": "^7.0.118",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
+    "input-otp": "^1.4.2",
+    "lucide-react": "^0.575.0",
+    "react": "^19.2.0",
+    "react-day-picker": "^9.14.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.71.2",
+    "react-markdown": "^10.1.0",
+    "react-resizable-panels": "^4.6.5",
+    "recharts": "^2.15.4",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.1",
+    "tw-animate-css": "^1.3.4",
+    "vaul": "^1.1.2",
+    "vite-tsconfig-paths": "^6.0.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@lovable.dev/vite-tanstack-config": "^2.24.0",
+    "@types/node": "^22.16.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "drizzle-kit": "^0.31.11",
+    "drizzle-orm": "^0.45.3",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^15.15.0",
+    "nitro": "3.0.260603-beta",
+    "postgres": "^3.4.9",
+    "prettier": "^3.7.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "8.1.5"
+  }
+}
+📄 public/robots.txt
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /
+📄 roadmap.md
+- [x] Crear identidad visual y páginas públicas de SCORVYNX.
+- [x] Conectar solicitudes y adjuntos privados con Lovable Cloud.
+- [x] Verificar navegación, formularios y apariencia en celular y computadora.
+📄 src/components/assistant/assistant-chat.tsx
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowUp, Check, RotateCcw, Square, X } from "lucide-react";
+import { submitInquiry } from "@/lib/inquiries.functions";
+
+export const OPEN_ASSISTANT_EVENT = "scorvynx:open-assistant";
+export function openAssistant() {
+  window.dispatchEvent(new Event(OPEN_ASSISTANT_EVENT));
+}
+
+const GREETING = "Hola 👋 Soy el asistente de SCORVYNX. Puedo ayudarte a convertir tu idea en un proyecto organizado. ¿Qué necesitas desarrollar?";
+
+export type Brief = {
+  name: string; company: string | null; service: string; objective: string; requirements: string;
+  budget: string | null; desiredDate: string | null; email: string; whatsapp: string | null; summary: string;
+};
+
+function AgentMark() {
+  return <span className="asst-mark" aria-hidden="true"><span /></span>;
+}
+
+function BriefCard({ brief }: { brief: Brief }) {
+  const submit = useServerFn(submitInquiry);
+  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  const [error, setError] = useState("");
+  const rows: [string, string | null][] = [
+    ["Nombre", brief.name], ["Empresa", brief.company], ["Servicio", brief.service], ["Objetivo", brief.objective],
+    ["Requisitos", brief.requirements], ["Presupuesto aproximado", brief.budget], ["Fecha deseada", brief.desiredDate],
+    ["Contacto", [brief.email, brief.whatsapp].filter(Boolean).join(" · ")],
+  ];
+  async function send() {
+    setState("sending"); setError("");
+    try {
+      await submit({ data: {
+        kind: "project", name: brief.name, company: brief.company ?? "", email: brief.email, whatsapp: brief.whatsapp ?? "",
+        projectType: brief.service.slice(0, 100), budget: (brief.budget ?? "").slice(0, 100), desiredDate: "",
+        description: `[Brief generado con el asistente IA]\n\n${brief.summary}\n\nObjetivo: ${brief.objective}\nRequisitos: ${brief.requirements}\nFecha deseada: ${brief.desiredDate ?? "Por definir"}`.slice(0, 5000),
+        attachments: [], website: "",
+      } });
+      setState("sent");
+    } catch (e) {
+      setState("idle");
+      setError(e instanceof Error && e.message.length < 140 ? e.message : "No se pudo enviar. Revisa tu correo y nombre e inténtalo de nuevo.");
+    }
+  }
+  return <div className="asst-brief">
+    <div className="asst-brief-head"><span>BRIEF INICIAL</span><strong>Resumen de tu proyecto</strong></div>
+    <p className="asst-brief-summary">{brief.summary}</p>
+    <dl>{rows.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v || "—"}</dd></div>)}</dl>
+    {state === "sent"
+      ? <div className="asst-sent" role="status"><Check size={18} /> Gracias. Hemos recibido tu proyecto. Nuestro equipo lo revisará y se pondrá en contacto contigo.</div>
+      : <><button className="asst-send" onClick={send} disabled={state === "sending"}>{state === "sending" ? "Enviando..." : "Enviar proyecto a SCORVYNX"} <ArrowUp size={16} /></button>
+        <small>¿Algo no es correcto? Escríbelo en el chat y actualizaremos el resumen.</small></>}
+    {error && <p className="asst-error" role="alert">{error}</p>}
+  </div>;
+}
+
+function ChatBody({ onClose, onReset }: { onClose: () => void; onReset: () => void }) {
+  const { messages, sendMessage, status, stop, error } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/assistant" }),
+  });
+  const [input, setInput] = useState("");
+  const endRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const busy = status === "submitted" || status === "streaming";
+  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }); }, [messages, status]);
+  useEffect(() => { if (!busy) inputRef.current?.focus(); }, [busy]);
+  function send() {
+    const text = input.trim();
+    if (!text || busy) return;
+    sendMessage({ text }); setInput("");
+  }
+  return <>
+    <header className="asst-header">
+      <AgentMark />
+      <div><strong>Asistente SCORVYNX</strong><span><i className="asst-live" /> IA · Un especialista revisará tu solicitud</span></div>
+      <button aria-label="Nueva conversación" onClick={onReset}><RotateCcw size={17} /></button>
+      <button aria-label="Cerrar asistente" onClick={onClose}><X size={19} /></button>
+    </header>
+    <div className="asst-log" aria-live="polite">
+      <div className="asst-msg asst-bot"><AgentMark /><div className="asst-text"><p>{GREETING}</p></div></div>
+      {messages.map((m) => m.role === "user"
+        ? <div key={m.id} className="asst-msg asst-user"><div>{m.parts.map((p, i) => p.type === "text" ? <p key={i}>{p.text}</p> : null)}</div></div>
+        : <div key={m.id} className="asst-msg asst-bot"><AgentMark /><div className="asst-text">{m.parts.map((p, i) => {
+            if (p.type === "text") return <ReactMarkdown key={i}>{p.text}</ReactMarkdown>;
+            if (p.type === "tool-prepare_brief") {
+              const part = p as { state: string; output?: Brief };
+              if (part.state === "output-available" && part.output) return <BriefCard key={i} brief={part.output} />;
+              return <p key={i} className="asst-muted">Organizando tu información…</p>;
+            }
+            return null;
+          })}</div></div>)}
+      {status === "submitted" && <div className="asst-msg asst-bot"><AgentMark /><div className="asst-typing"><i /><i /><i /></div></div>}
+      {error && <p className="asst-error" role="alert">{error.message || "No pudimos obtener respuesta. Inténtalo de nuevo."}</p>}
+      <div ref={endRef} />
+    </div>
+    <form className="asst-composer" onSubmit={(e) => { e.preventDefault(); send(); }}>
+      <textarea ref={inputRef} rows={1} value={input} placeholder="Escribe tu mensaje…" aria-label="Mensaje para el asistente"
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} />
+      {busy
+        ? <button type="button" aria-label="Detener" onClick={() => stop()}><Square size={15} /></button>
+        : <button type="submit" aria-label="Enviar mensaje" disabled={!input.trim()}><ArrowUp size={18} /></button>}
+    </form>
+    <p className="asst-disclaimer">La IA organiza tu solicitud; el desarrollo lo realizan especialistas humanos.</p>
+  </>;
+}
+
+export function AssistantWidget() {
+  const [open, setOpen] = useState(false);
+  const [session, setSession] = useState(0);
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener(OPEN_ASSISTANT_EVENT, handler);
+    return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, handler);
+  }, []);
+  return <>
+    {open && <div className="asst-panel" role="dialog" aria-label="Asistente IA de SCORVYNX">
+      <ChatBody key={session} onClose={() => setOpen(false)} onReset={() => setSession((s) => s + 1)} />
+    </div>}
+    {!open && <button className="asst-fab" onClick={() => setOpen(true)}><AgentMark /><span>Hablar con nuestro asistente IA</span></button>}
+  </>;
+}
+📄 src/components/brand.tsx
+import { Link } from "@tanstack/react-router";
+export function Brand({ inverse = false }: { inverse?: boolean }) {
+  return <Link to="/" className={`brand ${inverse ? "brand-inverse" : ""}`} aria-label="SCORVYNX, inicio"><span className="brand-mark"><span /></span><span>SCORVYNX<span className="brand-period">.</span></span></Link>;
+}
+📄 src/components/content.tsx
+import { Link } from "@tanstack/react-router";
+import { ArrowRight, ArrowUpRight, Brush, Fingerprint, Box, Monitor, Files, Shapes, Workflow, Sparkles, Search, Users, BadgeCheck, MessageSquareText, Layers3, Zap, ShieldCheck, Cpu } from "lucide-react";
+import { Button } from "./ui/button";
+import branding from "@/assets/scorvynx-branding.jpg";
+import packaging from "@/assets/scorvynx-packaging.jpg";
+import web from "@/assets/scorvynx-web.jpg";
+export const services=[
+ {name:"Diseño gráfico",description:"Logotipos, identidad visual, material publicitario y contenido para empresas.",icon:Brush},
+ {name:"Branding",description:"Creación y desarrollo de una identidad de marca que comunica quién eres.",icon:Fingerprint},
+ {name:"Diseño de empaques",description:"Diseño profesional de empaques y packaging para productos.",icon:Box},
+ {name:"Diseño web",description:"Páginas web, landing pages y sitios empresariales pensados para crecer.",icon:Monitor},
+ {name:"Catálogos y material comercial",description:"Catálogos digitales, menús, presentaciones y material para ventas.",icon:Files},
+ {name:"Contenido digital",description:"Diseños para redes sociales, publicidad y contenido visual.",icon:Shapes},
+ {name:"Automatización",description:"Procesos empresariales más simples con herramientas digitales.",icon:Workflow},
+ {name:"Inteligencia artificial",description:"Soluciones de IA para organizar y mejorar procesos empresariales.",icon:Sparkles},
+];
+export const steps=[
+ {number:"01",title:"Cuéntanos tu idea",text:"Explícanos qué necesitas mediante nuestro formulario de proyecto.",icon:MessageSquareText},
+ {number:"02",title:"Analizamos el proyecto",text:"Organizamos la información y preparamos un brief profesional.",icon:Search},
+ {number:"03",title:"Asignamos especialistas",text:"Seleccionamos al profesional adecuado para desarrollar tu proyecto.",icon:Users},
+ {number:"04",title:"Revisamos y entregamos",text:"Supervisamos el trabajo y te entregamos el resultado final.",icon:BadgeCheck},
+];
+export const projects=[
+ {title:"Sistema de identidad",category:"Branding",image:branding},
+ {title:"Presencia digital",category:"Diseño web",image:web},
+ {title:"Diseño que se siente",category:"Packaging",image:packaging},
+ {title:"Experiencia comercial",category:"Catálogos",image:branding},
+ {title:"Interfaz conectada",category:"Tecnología",image:web},
+ {title:"Procesos inteligentes",category:"Automatización e IA",image:packaging},
+];
+export function Eyebrow({children}:{children:React.ReactNode}){return <div className="eyebrow"><span className="eyebrow-line"/>{children}</div>}
+export function PageIntro({eyebrow,title,description}:{eyebrow:string,title:string,description:string}){return <section className="page-intro"><div className="container"><Eyebrow>{eyebrow}</Eyebrow><h1>{title}</h1><p>{description}</p></div></section>}
+export function SectionHeading({eyebrow,title,description,light=false}:{eyebrow:string,title:string,description?:string,light?:boolean}){return <div className={`section-heading ${light?"section-heading-light":""}`}><div><Eyebrow>{eyebrow}</Eyebrow><h2>{title}</h2></div>{description&&<p>{description}</p>}</div>}
+export function ServiceGrid(){return <div className="service-grid">{services.map(({name,description,icon:Icon},i)=><article className="service-item" key={name}><div className="service-index">0{i+1} <Icon size={24} strokeWidth={1.4}/></div><h3>{name}</h3><p>{description}</p><Link t
